@@ -1,0 +1,20 @@
+# Node / frontend
+eln/node_modules/
+eln/.next/
+eln/build/
+eln/dist/
+
+# Sanity
+eln-testpro/node_modules/
+eln-testpro/.sanity/
+eln-testpro/dist/
+
+# Environment files
+*.env
+*.env.local
+*.env.production
+
+# Ignore large build files
+eln/out.zip
+eln-testpro/out.zip
+*.zip
