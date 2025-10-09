@@ -29,6 +29,18 @@ const categories = [
   'Product',
   'News & Event',
 ];
+interface BannerCardProps {
+    img: string;
+    alt?: string;
+    label: string;
+    title: string;
+    desc: string;
+    author: string;       // required
+    usernameTags?: string[];
+    publishedAt?: string;
+    slug: string;         // required
+}
+
 
 
 function Productdownload(){
@@ -312,15 +324,14 @@ function Productdownload(){
                                              img={placeholder_img}
                                              label={i % 2 === 0 ? "General" : "Product"}
                                              title={"Top 10 Features to look for in Modern LIMS Software"}
-                                             desc={"Why Your Laboratory Needs an Electronic Lab Notebook Documentation is of utmost essence in the scientific..."}
-                                           />
+                                             desc={"Why Your Laboratory Needs an Electronic Lab Notebook Documentation is of utmost essence in the scientific..."} author={""} slug={""}                                           />
                                          </div>
                                        ))}
                                      </div>
                                    </div>
                  </div>
               <div className="mt-5">
-                    <Pagination/>
+                    
               </div>
                   
                 </div>
