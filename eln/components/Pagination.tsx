@@ -1,13 +1,26 @@
 'use client';
-export default function Pagination({ totalItems, itemsPerPage, currentPage, onPageChange }) {
+
+interface PaginationProps {
+  totalItems: number;
+  itemsPerPage: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+}
+
+export default function Pagination({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  onPageChange,
+}: PaginationProps) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const goToPage = (page) => {
+  const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
     onPageChange(page);
   };
 
-  const renderPageNumber = (page) => (
+  const renderPageNumber = (page: number) => (
     <li key={page} className="page-item">
       <button
         className={`btn mx-1 ${currentPage === page ? 'btn-dark' : 'btn-light border'}`}
