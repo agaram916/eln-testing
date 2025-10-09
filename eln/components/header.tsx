@@ -10,7 +10,7 @@ import logoblack from '../public/assets/images/eln_logo.svg'
 import downwhitearrow from '../public/assets/images/downwhitearrow.svg'
 import downarrow from '../public/assets/images/downarrow..svg'
 import all_solution from '../public/assets/images/menu/all_solution.svg'  
-import research_development from '../public/assets/images/menu/Research_Development.svg'
+import Research_Development from '../public/assets/images/menu/Research_Development.svg'
 import Academics_menu_icon from '../public/assets/images/menu/Academics_menu_icon.svg' 
 import qa_ac_labs from '../public/assets/images/menu/qa_ac_labs.svg' 
 import data_integrity_compliance from '../public/assets/images/menu/data_integrity_compliance.svg'
@@ -230,7 +230,7 @@ const handleMenuToggle = (menu: string) => {
                                                     </Link>
                                                     <Link href="/solution/research" className="nav-link ">
                                                     <li className="mt-2 px-3 py-3 d-flex">  
-                                                        <Image src={research_development} alt="" className="me-2" />
+                                                        <Image src={Research_Development} alt="Research Development" className="me-2" />
                                                         <div className="d-flex flex-column">
                                                           <span className="f_600 f_size_16">Research & Development</span>
                                                           <span className="submenu-sub-text">From ideas to innovations</span>
