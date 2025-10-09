@@ -25,6 +25,11 @@ import Pagination from "@/components/Pagination";
 import { useRouter } from "next/navigation";
 import { client } from "@/lib/sanity";
 
+interface Ad {
+  image: any;       // or a more specific type depending on your image object shape
+  url?: string;     // optional string or string | null depending on data shape
+}
+
 const blogsByTagQuery = `*[_type == "blog" && $tag in usernameTags] | order(publishedAt desc){
   title,
   summary,
@@ -51,10 +56,11 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
   const router = useRouter();
   const [touchedTop, setTouchedTop] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [randomAd, setRandomAd] = useState(null);
+  const [randomAd, setRandomAd] = useState<Ad | null>(null);
 
   useEffect(() => {
-    client.fetch(blogsByTagQuery, { tag: params.tagslug }).then(setBlogs);
+    client.fetch(blogsByTagQuery, { tag: params.tagslug } as Record<string, any>).then(setBlogs);
+
   }, [params.tagslug]);
 
   useEffect(() => {

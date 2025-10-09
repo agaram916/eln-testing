@@ -24,6 +24,7 @@ import { FaAngleRight } from "react-icons/fa";
 import BannerCard from "../../publication/banner-card/banner-card";
 import { useRouter } from "next/navigation";
 
+
 const categories = [
     "All articles",
     "Blog of the Month",
@@ -43,10 +44,25 @@ const query = `*[_type == "blog" && slug.current == $slug][0]{
   publishedAt,
   viewCount,   
   "mainImage": mainImage.asset->url
+
 }`;
+type Topic = { level: string; text: string };
+
+function getTextFromChildren(children: React.ReactNode): string {
+    if (typeof children === 'string') {
+        return children;
+    }
+    if (Array.isArray(children)) {
+        return children.map(getTextFromChildren).join('');
+    }
+    if (children && typeof children === 'object' && 'props' in children) {
+        return getTextFromChildren((children as React.ReactElement).props.children);
+    }
+    return '';
+}
+
 
 export default function Productdownload({ params }: { params: { slug: string } }) {
-
 
     const [currentPage, setCurrentPage] = useState(1);
     const [selected, setSelected] = useState("Newest");
@@ -54,7 +70,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
     const [hideCategoryBox, setHideCategoryBox] = useState(false);
     const router = useRouter();
     const [blog, setBlog] = useState<any>(null); // or useState<BlogType | null>(null)
-    const [mainTopics, setMainTopics] = useState<string[]>([]);
+    const [mainTopics, setMainTopics] = useState<Topic[]>([]);
     const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
     const [viewCount, setViewCount] = useState<number | null>(null);
     const relatedQuery = `*[_type == "blog" && category == $category && slug.current != $slug] | order(publishedAt desc)[0..1]{
@@ -80,19 +96,6 @@ export default function Productdownload({ params }: { params: { slug: string } }
 }`;
 
 
-
-    //    useEffect(() => {
-    //     const fetchRelated = async () => {
-    //         if (!blog) return; // wait for main blog to load
-    //         const data = await client.fetch(relatedQuery, {
-    //             slug: params.slug,
-    //             category: blog.category, // current blog's category
-    //         });
-    //         setRelatedBlogs(data);
-    //     };
-    //     fetchRelated();
-    // }, [blog]); // depend on blog
-
     useEffect(() => {
         const fetchRelated = async () => {
             if (!blog) return; // wait for main blog to load
@@ -109,7 +112,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
                 for (let other of others) {
                     if (related.length >= 2) break;
                     // avoid duplicates
-                    if (!related.find(b => b.slug.current === other.slug.current)) {
+                    if (!related.find((b: { slug: { current: any; }; }) => b.slug.current === other.slug.current)) {
                         related.push(other);
                     }
                 }
@@ -120,15 +123,6 @@ export default function Productdownload({ params }: { params: { slug: string } }
 
         fetchRelated();
     }, [blog]);
-
-
-
-
-
-
-
-
-
 
 
     useEffect(() => {
@@ -401,17 +395,21 @@ export default function Productdownload({ params }: { params: { slug: string } }
 
                                         // <-- Add these heading handlers here
                                         h1: ({ children }) => {
-                                            const id = children.join("-").toLowerCase().replace(/\s+/g, "-");
+                                            const text = getTextFromChildren(children);
+                                            const id = text.toLowerCase().replace(/\s+/g, "-");
                                             return <h1 id={id} className="mt-4 mb-2">{children}</h1>;
                                         },
                                         h2: ({ children }) => {
-                                            const id = children.join("-").toLowerCase().replace(/\s+/g, "-");
+                                            const text = getTextFromChildren(children);
+                                            const id = text.toLowerCase().replace(/\s+/g, "-");
                                             return <h2 id={id} className="mt-4 mb-2">{children}</h2>;
                                         },
                                         h3: ({ children }) => {
-                                            const id = children.join("-").toLowerCase().replace(/\s+/g, "-");
+                                            const text = getTextFromChildren(children);
+                                            const id = text.toLowerCase().replace(/\s+/g, "-");
                                             return <h3 id={id} className="mt-3 mb-1">{children}</h3>;
                                         },
+
                                     },
                                 }}
                             />
@@ -604,30 +602,30 @@ export default function Productdownload({ params }: { params: { slug: string } }
 
                         </div>
                         <div className="mt-5">
-                            
+
 
                         </div>
                     </div>
-                     <div className="hero-section container">
-          <div className="d-flex justify-content-between text-white px-4">
-            <div className="d-flex flex-column">
-              <h1 className="text-white">
-                Digitize <span className="text-white">.</span> Simplify <span className="text-white">.</span> Organize <span className="text-white">.</span>
-              </h1>
-              <p className="lead text-white">
-                Kickstart your paperless lab with Logilab ELN
-              </p>
-            </div>
-            <div className="d-flex justify-content-center mt-4">
-              <Link href="#" passHref legacyBehavior>
-                <a className="btn  rounded-pill">Request a Demo</a>
-              </Link>
-              <Link href="#" passHref legacyBehavior>
-                <a className="btn rounded-pill ms-3">Book A Demo</a>
-              </Link>
-            </div>
-          </div>
-        </div>
+                    <div className="hero-section container">
+                        <div className="d-flex justify-content-between text-white px-4">
+                            <div className="d-flex flex-column">
+                                <h1 className="text-white">
+                                    Digitize <span className="text-white">.</span> Simplify <span className="text-white">.</span> Organize <span className="text-white">.</span>
+                                </h1>
+                                <p className="lead text-white">
+                                    Kickstart your paperless lab with Logilab ELN
+                                </p>
+                            </div>
+                            <div className="d-flex justify-content-center mt-4">
+                                <Link href="#" passHref legacyBehavior>
+                                    <a className="btn  rounded-pill">Request a Demo</a>
+                                </Link>
+                                <Link href="#" passHref legacyBehavior>
+                                    <a className="btn rounded-pill ms-3">Book A Demo</a>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

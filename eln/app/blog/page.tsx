@@ -65,13 +65,27 @@ const Blog = () => {
   const BannerRef = useRef<HTMLDivElement>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupClosed, setPopupClosed] = useState(false);
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const router = useRouter();
   const [touchedTop, setTouchedTop] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [featuredBlog, setFeaturedBlog] = useState(null);
-  const [randomAd, setRandomAd] = useState(null);
+  const [featuredBlog, setFeaturedBlog] = useState<Blog | null>(null);
+  const [randomAd, setRandomAd] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  interface Blog {
+    title: string;
+    slug: { current: string };
+    summary?: string;
+    fullDetails?: any[];
+    category?: string;
+    author?: string;
+    usernameTags?: string[];
+    publishedAt?: string;
+    mainImage?: string;
+    viewCount?: number;
+  }
+
+
 
 
 
@@ -93,14 +107,15 @@ const Blog = () => {
 
 
   useEffect(() => {
-    client.fetch(blogsQuery).then(setBlogs);
+    client.fetch<Blog[]>(blogsQuery).then(setBlogs);
+
   }, []);
 
 
   useEffect(() => {
     client.fetch(blogsQuery).then((data) => {
       setBlogs(data);
-      const feat = data.find((blog) => blog.category === 'featured');
+      const feat = data.find((blog: { category: string; }) => blog.category === 'featured');
       setFeaturedBlog(feat || null);
     });
   }, []);
@@ -188,13 +203,14 @@ const Blog = () => {
     setShowPopup(false);
     setPopupClosed(true);
   }
-  const filteredBlogs = blogs.filter(blog => {
+  const filteredBlogs: Blog[] = blogs.filter((blog) => {
+
     const lowerSearch = searchTerm.toLowerCase();
 
     const titleMatch = blog.title?.toLowerCase().includes(lowerSearch);
     const summaryMatch = blog.summary?.toLowerCase().includes(lowerSearch);
     const authorMatch = blog.author?.toLowerCase().includes(lowerSearch);
-    const usernameTagsMatch = blog.usernameTags?.some(tag => tag.toLowerCase().includes(lowerSearch));
+    const usernameTagsMatch = blog.usernameTags?.some((tag: string) => tag.toLowerCase().includes(lowerSearch));
     const categoryMatch = blog.category?.toLowerCase().includes(lowerSearch);
 
     // If "All articles", include everything that matches search except featured
@@ -204,7 +220,7 @@ const Blog = () => {
 
     // Blog of the Month
     if (activeCategory === "Blog of the Month") {
-      const blogDate = new Date(blog.publishedAt);
+      const blogDate = new Date(blog.publishedAt ?? Date.now());
       const now = new Date();
       return (
         blogDate.getMonth() === now.getMonth() &&
@@ -215,7 +231,7 @@ const Blog = () => {
 
     // Blog of the Week
     if (activeCategory === "Blog of the week") {
-      const blogDate = new Date(blog.publishedAt);
+      const blogDate = new Date(blog.publishedAt ?? Date.now());
       const now = new Date();
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(now.getDate() - 7);
@@ -253,13 +269,16 @@ const Blog = () => {
 
 
   // Group blogs by category
-  const groupedBlogs = blogs.reduce((acc, blog) => {
+  const groupedBlogs = blogs.reduce<Record<string, Blog[]>>((acc, blog) => {
+
     if (blog.category === 'featured') return acc; // skip featured
 
     const cat = blog.category || 'General';
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(blog);
-    acc[cat].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)); // newest first
+    acc[cat].sort(
+      (a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime()
+    );
     return acc;
   }, {});
 
@@ -321,7 +340,8 @@ const Blog = () => {
                     </div>
                     <h1>{featuredBlog.title}</h1>
                     <p>{featuredBlog.summary}</p>
-                    <p>{new Date(featuredBlog.publishedAt).toLocaleDateString()}</p>
+                    <p>{new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString()}</p>
+
                   </div>
                 ) : (
                   <>
@@ -436,7 +456,7 @@ const Blog = () => {
 
                             {/* 2 recent posts under each category */}
                             <div className="row">
-                              {groupedBlogs[cat].slice(0, 2).map((blog, idx) => (
+                              {groupedBlogs[cat].slice(0, 2).map((blog: Blog, idx: number) => (
                                 <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
                                   <BannerCard
                                     img={blog.mainImage || placeholder_img}

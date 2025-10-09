@@ -13,7 +13,7 @@ export const client = createClient({
     dataset: 'eln-test',
     apiVersion: '2024-09-03', // use the latest version date
     useCdn: false, 
-    token:'skwxZj9UieQpxfk8n20YWveO8fLlIlZc8eA1o2sTJYUvkck3OGeMY18EF7aHI1pXkNMG8wGeAA1P9rGP3zwjdgCvX1QI9P8HtxQ8rzIQDv3xBofxJRnzGSNRVgmSrgShbEDiJguD5Mh4yQ73Kom9PoSlX78ADRIjE9l18diPQ24qhB0Dhh32'
+    token:'skP91PuIeTDNnRab7GV9vmdk7ctPOOtLOe6qNhMfY9EEXnnitRZ0i0i0HZVizwLHq5e4n4XbdbkDQxiFgWBvvqJxUbi3QUoEuHuC7jjBRKcPdTCFkfMrzodu8Cd2EZQNK44mN19xh4DFLJ98aLLF6B8mwK9wJUK4LDI2Y6DMMLpfWVkAPWja'
 });
 
 

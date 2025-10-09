@@ -6,8 +6,8 @@ interface BannerCardProps {
     alt?: string;
     label: string;
     title: string;
-    desc: string;
-    author: string;
+    desc?: string;
+    author?: string;
     usernameTags?: string[];
     publishedAt?: string;
     slug: string;
