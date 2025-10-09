@@ -94,21 +94,21 @@ export default function Publication (){
                 <div className="row mt-5">
                     <div className="col-md-6">
                         <div>
-                            <BannerCard 
+                            {/* <BannerCard 
                             img={placeholder_whitepaper}  
                             label={"Whitepaper"}
                             title={"How Logilab ELN helps organizations to maintain ALCOA Data Integrity"}
                             desc={"Why Your Laboratory Needs an Electronic Lab Notebook Documentation is of utmost essence in the scientific..."}
-                            />
+                            /> */}
                             <button className="download-btn">Read More</button>
                         </div>
                         <div className="mt-5">
-                            <BannerCard 
+                            {/* <BannerCard 
                             img={placeholder_whitepaper}  
                             label={"Whitepaper"}
                             title={"How Logilab ELN helps organizations to maintain ALCOA Data Integrity"}
                             desc={"Why Your Laboratory Needs an Electronic Lab Notebook Documentation is of utmost essence in the scientific..."}
-                            />
+                            /> */}
                             <button className="download-btn">Read More</button>
                         </div>
                     </div>
@@ -118,23 +118,23 @@ export default function Publication (){
                 </div>
                 <div className="row mt-5">
                     <div className="col-md-6">
-                        <BannerCard
+                        {/* <BannerCard
                         alt={""} 
                         img={placeholder_whitepaper}  
                         label={"Whitepaper"}
                         title={"How Logilab ELN helps organizations to maintain ALCOA Data Integrity"}
                         desc={"Why Your Laboratory Needs an Electronic Lab Notebook Documentation is of utmost essence in the scientific..."}
-                        />
+                        /> */}
                         <button className="download-btn">Read More</button>
                     </div>
                     <div className="col-md-6"> 
-                        <BannerCard
+                        {/* <BannerCard
                         alt={""} 
                         img={placeholder_whitepaper}  
                         label={"Whitepaper"}
                         title={"How Logilab ELN helps organizations to maintain ALCOA Data Integrity"}
                         desc={"Why Your Laboratory Needs an Electronic Lab Notebook Documentation is of utmost essence in the scientific..."}
-                        />
+                        /> */}
                         <button className="download-btn">Read More</button>
                     </div>
                 </div>
