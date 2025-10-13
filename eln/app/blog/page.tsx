@@ -58,7 +58,9 @@ const desiredOrder = ['topRead', 'general', 'product', 'news'];
 
 
 const Blog = () => {
-  const [activeCategory, setActiveCategory] = useState('All articles');
+  // const [activeCategory, setActiveCategory] = useState('All articles');
+  const [activeCategory, setActiveCategory] = useState('Categorized');
+
   const [hideCategoryBox, setHideCategoryBox] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
@@ -438,23 +440,24 @@ const Blog = () => {
                 <div className="p-3" style={{ width: '200px' }}>
                   <h5 className="">Category</h5>
                   <ul className="list-unstyled mt-3 mb-0">
-                    {categories.map((category) => (
-                      <li
-                        key={category}
-                        className={`d-flex align-items-center cursor-pointer  ${category === activeCategory ? 'text-primary fw-semibold' : 'text-secondary-li'
-                          }`}
-                        onClick={() => onCategoryClick(category)}
+                    {categories
+                      .filter(category => category !== 'Categorized') // 👈 hides it
+                      .map((category) => (
+                        <li
+                          key={category}
+                          className={`d-flex align-items-center cursor-pointer  ${category === activeCategory ? 'text-primary fw-semibold' : 'text-secondary-li'}`}
+                          onClick={() => onCategoryClick(category)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {category === activeCategory ? (
+                            <FaAngleRight className="me-2 text-primary" />
+                          ) : (
+                            <span className="me-4" />
+                          )}
+                          {category}
+                        </li>
+                      ))}
 
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {category === activeCategory ? (
-                          <FaAngleRight className="me-2 text-primary" />
-                        ) : (
-                          <span className="me-4" />
-                        )}
-                        {category}
-                      </li>
-                    ))}
                   </ul>
                 </div>
 
