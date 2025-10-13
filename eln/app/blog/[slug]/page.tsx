@@ -73,6 +73,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
     const [mainTopics, setMainTopics] = useState<Topic[]>([]);
     const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
     const [viewCount, setViewCount] = useState<number | null>(null);
+    const [activeTopic, setActiveTopic] = useState<string | null>(null);
     const relatedQuery = `*[_type == "blog" && category == $category && slug.current != $slug] | order(publishedAt desc)[0..1]{
   title,
   summary,
@@ -265,27 +266,37 @@ export default function Productdownload({ params }: { params: { slug: string } }
                             <div className="p-3" style={{ width: "200px" }}>
                                 <h5>Main Topics</h5>
                                 <ul className="list-unstyled mt-3 mb-0">
-                                    {mainTopics.map((topic, index) => (
-                                        <li
-                                            key={index}
-                                            onClick={() =>
-                                                document
-                                                    .getElementById(topic.text.toLowerCase().replace(/\s+/g, "-"))
-                                                    ?.scrollIntoView({ behavior: "smooth" })
-                                            }
-                                            className={`cursor-pointer d-flex align-items-start mb-2 ${topic.level === "h1"
-                                                ? "fw-bold"
-                                                : topic.level === "h2"
-                                                    ? "ms-2"
-                                                    : "ms-4 text-muted"
-                                                }`}
-                                        >
-                                            <FaAngleRight className="me-2 text-primary cursor-pointer" />
-
-                                            <span className="cursor-pointer">{topic.text}</span>
-                                        </li>
-                                    ))}
+                                    {mainTopics.map((topic, index) => {
+                                        const topicId = topic.text.toLowerCase().replace(/\s+/g, "-");
+                                        const isActive = activeTopic === topic.text;
+                                        return (
+                                            <li
+                                                key={index}
+                                                onClick={() => {
+                                                    setActiveTopic(topic.text);
+                                                    document.getElementById(topicId)?.scrollIntoView({ behavior: "smooth" });
+                                                }}
+                                                className={`cursor-pointer d-flex align-items-start mb-2 ${topic.level === "h1" ? "fw-bold" : topic.level === "h2" ? "ms-2" : "ms-4 text-muted"
+                                                    }`}
+                                                style={
+                                                    isActive
+                                                        ? {
+                                                            backgroundColor: "#e0f0ff",
+                                                            fontWeight: 600,
+                                                            borderRadius: "4px",
+                                                            padding: "2px 6px",
+                                                            transition: "background-color 0.3s ease",
+                                                        }
+                                                        : {}
+                                                }
+                                            >
+                                                <FaAngleRight className="me-2 text-primary cursor-pointer" />
+                                                <span className="cursor-pointer">{topic.text}</span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
+
 
 
                             </div>

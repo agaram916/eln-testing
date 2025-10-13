@@ -50,7 +50,8 @@ export default function BannerCard(props: BannerCardProps) {
                         {props.author}
                     </span>
                     <span style={{ fontWeight: '400' }}>
-                        {props.publishedAt ? new Date(props.publishedAt).toDateString() : ""}
+                        {props.publishedAt ? new Date(props.publishedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : ""}
+
                     </span>
                 </p>
             </div>

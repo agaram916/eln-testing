@@ -57,9 +57,11 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
   const [touchedTop, setTouchedTop] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [randomAd, setRandomAd] = useState<Ad | null>(null);
+  const decodedTag = decodeURIComponent(params.tagslug);
+
 
   useEffect(() => {
-    client.fetch(blogsByTagQuery, { tag: params.tagslug } as Record<string, any>).then(setBlogs);
+    client.fetch(blogsByTagQuery, { tag: decodedTag } as Record<string, any>).then(setBlogs);
 
   }, [params.tagslug]);
 
@@ -160,7 +162,7 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
                   </button>
                   <span className="line ms-2" />
                 </div>
-                <h1>Posts tagged with "{params.tagslug}"</h1>
+                <h1>Posts tagged with "{decodedTag}"</h1>
                 <p>Showing latest blog posts for the selected tag.</p>
               </div>
               <div className="col-md-6">
@@ -201,7 +203,7 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
                         author={blog.author}
                         usernameTags={blog.usernameTags}
                         publishedAt={blog.publishedAt}
-                        slug={blog.slug.current}
+                        slug={decodeURIComponent(blog.slug.current)}
                       />
                     </div>
                   ))}

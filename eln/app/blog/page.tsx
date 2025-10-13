@@ -24,17 +24,17 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import Pagination from '@/components/Pagination';
 import { useRouter } from 'next/navigation';
 
-const blogsPerPage = 6;
+const blogsPerPage = 4;
 import { client } from "@/lib/sanity";
 const categories = [
+  'All articles',
+  'Top Read Articles',
+  'Categorized',
   'General',
   'Product',
-  'All articles',
   'News & Event',
-  'Blog of the Month',
-  'Blog of the week',
+
 ];
-// Desired order for "All articles"
 
 
 const blogsQuery = `*[_type == "blog"] | order(publishedAt desc){
@@ -52,7 +52,8 @@ const adsQuery = `*[_type == "adImage"]{
   image,
   url
 }`;
-const desiredOrder = ['general', 'product', 'news'];
+const desiredOrder = ['topRead', 'general', 'product', 'news'];
+
 
 
 
@@ -84,6 +85,26 @@ const Blog = () => {
     mainImage?: string;
     viewCount?: number;
   }
+  const categoryTitles: { [key: string]: string } = {
+    general: 'General',
+    product: 'Product',
+    news: 'News & Event',
+    featured: 'Featured',
+    topRead: 'Top Read Articles',
+  };
+  // Add this ref in your component
+  const blogsSectionRef = useRef<HTMLDivElement>(null);
+
+  // Update category click handler to smooth scroll
+  const onCategoryClick = (category: string) => {
+    setActiveCategory(category);
+    // Smooth scroll to blogs section
+    blogsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Reset pagination or other states if needed
+    setCurrentPage(1);
+  };
+
+
 
 
 
@@ -213,31 +234,40 @@ const Blog = () => {
     const usernameTagsMatch = blog.usernameTags?.some((tag: string) => tag.toLowerCase().includes(lowerSearch));
     const categoryMatch = blog.category?.toLowerCase().includes(lowerSearch);
 
-    // If "All articles", include everything that matches search except featured
+
     if (activeCategory === "All articles") {
-      return (blog.category !== 'featured') && (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch);
+      return blog.category !== 'featured' && (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch);
     }
 
-    // Blog of the Month
-    if (activeCategory === "Blog of the Month") {
-      const blogDate = new Date(blog.publishedAt ?? Date.now());
-      const now = new Date();
-      return (
-        blogDate.getMonth() === now.getMonth() &&
-        blogDate.getFullYear() === now.getFullYear() &&
-        (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch)
-      );
+    if (activeCategory === "Categorized") {
+      return blog.category !== 'featured' && (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch);
     }
 
-    // Blog of the Week
-    if (activeCategory === "Blog of the week") {
-      const blogDate = new Date(blog.publishedAt ?? Date.now());
-      const now = new Date();
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(now.getDate() - 7);
-      return blogDate >= oneWeekAgo && blogDate <= now &&
-        (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch);
+    if (activeCategory === "Top Read Articles") {
+
+      return blog.category === 'topRead';
     }
+
+
+    // if (activeCategory === "Blog of the Month") {
+    //   const blogDate = new Date(blog.publishedAt ?? Date.now());
+    //   const now = new Date();
+    //   return (
+    //     blogDate.getMonth() === now.getMonth() &&
+    //     blogDate.getFullYear() === now.getFullYear() &&
+    //     (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch)
+    //   );
+    // }
+
+    // // Blog of the Week
+    // if (activeCategory === "Blog of the week") {
+    //   const blogDate = new Date(blog.publishedAt ?? Date.now());
+    //   const now = new Date();
+    //   const oneWeekAgo = new Date();
+    //   oneWeekAgo.setDate(now.getDate() - 7);
+    //   return blogDate >= oneWeekAgo && blogDate <= now &&
+    //     (titleMatch || summaryMatch || authorMatch || usernameTagsMatch || categoryMatch);
+    // }
 
     // Normal category filtering
     const categoryMap: { [key: string]: string } = {
@@ -281,6 +311,7 @@ const Blog = () => {
     );
     return acc;
   }, {});
+  console.log("Grouped Blogs:", groupedBlogs);
 
 
 
@@ -308,65 +339,80 @@ const Blog = () => {
           </div>
         )}
 
-        <div className="publication-banner" >
+        <div className="publication-banner">
           <div className="container">
             <div className="row mt-5" ref={BannerRef}>
               <div className="col-md-6 position-relative">
-                {featuredBlog ? (
-                  <div
-                    className="featured-blog-card"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => router.push(`/blog/${featuredBlog.slug.current}`)}
+                {/* Whitepaper image (always visible like in static) */}
+                <Image
+                  src={whitepaper}
+                  alt="Feature Whitepaper"
+                  className="whitepaper"
+                  width={260}
+                  height={50}
+                />
+
+                {/* Blog label + Back button */}
+                <div className="d-flex align-items-center">
+                  <h6>Blog</h6>
+                  <button
+                    className="back-arrow-btn"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent accidental navigation
+                      router.back();
+                    }}
                   >
-                    <Image
-                      src={featuredBlog.mainImage || placeholder_img1}
-                      alt="Featured Blog Image"
-                      className="img-fluid placeholder1"
-                      width={260}
-                      height={50}
-                    />
-                    <div className="d-flex align-items-center">
-                      <h6>blog</h6>
-                      <button
-                        className="back-arrow-btn"
-                        onClick={(e) => {
-                          e.stopPropagation(); // prevent navigating to blog on back click
-                          router.back();
-                        }}
-                      >
-                        <Image src={back_arrow} alt="Back" width={20} height={20} />
-                      </button>
-                      <span className="line ms-2"></span>
-                    </div>
+                    <Image src={back_arrow} alt="Back" width={20} height={20} />
+                  </button>
+                  <span className="line ms-2"></span>
+                </div>
+
+                {/* Blog text content (dynamic or fallback static) */}
+                {featuredBlog ? (
+                  <>
                     <h1>{featuredBlog.title}</h1>
                     <p>{featuredBlog.summary}</p>
-                    <p>{new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString()}</p>
-
-                  </div>
+                    <p>
+                      {new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString()}
+                    </p>
+                  </>
                 ) : (
                   <>
-                    <Image src={placeholder_img1} alt="placeholder" className="img-fluid placeholder1" />
-                    <div className="d-flex align-items-center">
-                      <h6>blog</h6>
-                      <button className="back-arrow-btn" onClick={() => router.back()}>
-                        <Image src={back_arrow} alt="Back" width={20} height={20} />
-                      </button>
-                      <span className="line ms-2"></span>
-                    </div>
-                    <h1>Stay Updated with the latest in lab digitization and ELN advancements.</h1>
-                    <p>GxP is a set of regulations and quality guidelines formulated to ensure the safety of life sciences products while maintaining the quality of processes throughout every stage of manufacturing...</p>
+                    <h1>
+                      Stay Updated with the latest in lab digitization and ELN
+                      advancements.
+                    </h1>
+                    <p>
+                      GxP is a set of regulations and quality guidelines formulated to
+                      ensure the safety of life sciences products while maintaining the
+                      quality of processes throughout every stage of manufacturing...
+                    </p>
                     <p>Dec 22, 2025</p>
                   </>
                 )}
               </div>
+
+              {/* Right-side image (dynamic mainImage or placeholder) */}
               <div className="col-md-6">
-                {!featuredBlog && (
-                  <Image src={placeholder_img1} alt="placeholder" className="img-fluid placeholder1" />
-                )}
+                <Image
+                  src={
+                    featuredBlog?.mainImage
+                      ? featuredBlog.mainImage
+                      : placeholder_img1
+                  }
+                  alt="Featured Blog"
+                  className="img-fluid placeholder1"
+                  width={600}
+                  height={400}
+                />
               </div>
             </div>
 
-            <div ref={SearchRef} className={`search_bar w-75 mx-auto ${touchedTop ? 'fixed' : ''}`}>
+            {/* Search bar (same as before) */}
+            <div
+              ref={SearchRef}
+              className={`search_bar w-75 mx-auto ${touchedTop ? "fixed" : ""}`}
+            >
               <div className="search-icon">
                 <Image src={search} alt="search" width={16} />
               </div>
@@ -374,13 +420,13 @@ const Blog = () => {
                 type="text"
                 placeholder="Start searching here"
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-
             </div>
-            {touchedTop && <div style={{ height: '180px' }} />}
+            {touchedTop && <div style={{ height: "180px" }} />}
           </div>
         </div>
+
 
         <div className="container">
           <div className='row mt-5'>
@@ -397,7 +443,8 @@ const Blog = () => {
                         key={category}
                         className={`d-flex align-items-center cursor-pointer  ${category === activeCategory ? 'text-primary fw-semibold' : 'text-secondary-li'
                           }`}
-                        onClick={() => setActiveCategory(category)}
+                        onClick={() => onCategoryClick(category)}
+
                         style={{ cursor: 'pointer' }}
                       >
                         {category === activeCategory ? (
@@ -428,86 +475,172 @@ const Blog = () => {
               </div>
             </div>
 
-            <div className='col-md-9 blogs-section '>
-              <div className="d-flex justify-content-between align-items-center">
-                <div className='recent'>
-                  <label>Featured</label>
-                  <h2 className="recent-post-heading">
-                    <span className="highlight-bg">Recent Post</span>
-                  </h2>
+            <div className='col-md-9 blogs-section ' ref={blogsSectionRef}>
+              {["General", "Product", "News & Event", "All articles"].includes(activeCategory) && (
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className='recent'>
+                    <h2 className="recent-post-heading">
+                      <span className="highlight-bg">{activeCategory}</span>
+                    </h2>
+                  </div>
+                  <div className="col-4 text-end recent">
+                    <Image src={recent} alt="recent" />
+                    <p className="mt-4">Explore the latest insights, tips, and updates on lab digitization and ELN systems.</p>
+                  </div>
                 </div>
-                <div className="col-4 text-end recent">
-                  <Image src={recent} alt="recent" />
-                  <p className="mt-4">Explore the latest insights, tips, and updates on lab digitization and ELN systems.</p>
-                </div>
-              </div>
+              )}
 
               <div className="container">
                 <div className="container">
                   <div className="row">
-                    {activeCategory === "All articles" ? (
-                      desiredOrder
-                        .filter(cat => groupedBlogs[cat]) // only show categories that exist
-                        .map(cat => (
-
-                          <div key={cat} className="mb-5">
-                            {/* Category Title */}
-                            <h4 className="recent-post-heading mb-4">{cat}</h4>
-
-                            {/* 2 recent posts under each category */}
-                            <div className="row">
-                              {groupedBlogs[cat].slice(0, 2).map((blog: Blog, idx: number) => (
-                                <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
-                                  <BannerCard
-                                    img={blog.mainImage || placeholder_img}
-                                    alt={blog.title}
-                                    label={blog.category || "General"}
-                                    title={blog.title}
-                                    desc={blog.summary}
-                                    author={blog.author}
-                                    usernameTags={blog.usernameTags}
-                                    publishedAt={blog.publishedAt}
-                                    slug={blog.slug.current}
-                                  />
-                                </div>
-                              ))}
-                            </div>
-
-                            {/* Show more under the posts */}
-                            <div className="text-center mt-2">
-                              <div style={{ textAlign: "right", marginTop: "10px" }}>
-                                <button
-                                  onClick={() => {
-                                    const matchedCategory = categories.find(c =>
-                                      c.toLowerCase().includes(cat.toLowerCase())
-                                    );
-                                    setActiveCategory(matchedCategory || "General");
-                                    window.scrollTo({ top: 0, behavior: "smooth" });
-                                  }}
-                                  style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    border: "none",
-                                    padding: "8px 18px",
-                                    borderRadius: "25px",
-                                    fontSize: "14px",
-                                    fontWeight: "500",
-                                    cursor: "pointer",
-                                    transition: "background-color 0.3s ease",
-                                  }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3399ff")}
-                                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
-                                >
-                                  Show more →
-                                </button>
+                    {activeCategory === "All article" ? (
+                      // Display all blogs flat (not grouped or sliced), paginated if needed
+                      paginatedBlogs.map((blog, idx) => (
+                        <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                          <BannerCard
+                            img={blog.mainImage || placeholder_img}
+                            alt={blog.title}
+                            label={blog.category || "General"}
+                            title={blog.title}
+                            desc={blog.summary}
+                            author={blog.author}
+                            usernameTags={blog.usernameTags}
+                            publishedAt={blog.publishedAt}
+                            slug={blog.slug.current}
+                          />
+                        </div>
+                      ))
+                    ) : activeCategory === "Categorized" ? (
+                      <>
+                        <h4
+                          className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block w-auto"
+                        >
+                          Recent Post
+                        </h4>
+                        <div className="row mb-6">
+                          {blogs
+                            .filter(blog => blog.category !== 'featured') // Exclude featured if needed
+                            .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
+                            .slice(0, 2)
+                            .map((blog, idx) => (
+                              <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                                <BannerCard
+                                  img={blog.mainImage || placeholder_img}
+                                  alt={blog.title}
+                                  label={blog.category || "General"}
+                                  title={blog.title}
+                                  desc={blog.summary}
+                                  author={blog.author}
+                                  usernameTags={blog.usernameTags}
+                                  publishedAt={blog.publishedAt}
+                                  slug={decodeURIComponent(blog.slug.current)}
+                                />
                               </div>
+                            ))
+                          }
+                        </div>
+                        <hr className="mt-4" />
 
-                            </div>
+                        {desiredOrder
+                          .filter(cat => groupedBlogs[cat])
+                          .reduce<JSX.Element[]>((elements, cat, index) => {
+                            elements.push(
+                              <div key={cat} className="mb-5">
+                                <h4 className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block">
+                                  {categoryTitles[cat] || cat}
+                                </h4>
 
-                            <hr className="mt-4" />
-                          </div>
-                        ))
+                                <div className="row">
+                                  {groupedBlogs[cat].slice(0, 4).map((blog, idx) => (
+                                    <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                                      <BannerCard
+                                        img={blog.mainImage || placeholder_img}
+                                        alt={blog.title}
+                                        label={blog.category || "General"}
+                                        title={blog.title}
+                                        desc={blog.summary}
+                                        author={blog.author}
+                                        usernameTags={blog.usernameTags}
+                                        publishedAt={blog.publishedAt}
+                                        slug={decodeURIComponent(blog.slug.current)}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* ✅ Show "Show more" button only if NOT Top Read Articles */}
+                                {cat !== "topRead" && (
+                                  <div className="text-center mt-2">
+                                    <div style={{ textAlign: "right", marginTop: "10px" }}>
+                                      <button
+                                        onClick={() => {
+                                          const matchedCategory = categories.find(c =>
+                                            c.toLowerCase().includes(cat.toLowerCase())
+                                          );
+                                          setActiveCategory(matchedCategory || "General");
+                                          window.scrollTo({ top: 0, behavior: "smooth" });
+                                        }}
+                                        style={{
+                                          backgroundColor: "#007bff",
+                                          color: "white",
+                                          border: "none",
+                                          padding: "8px 18px",
+                                          borderRadius: "25px",
+                                          fontSize: "14px",
+                                          fontWeight: "500",
+                                          cursor: "pointer",
+                                          transition: "background-color 0.3s ease",
+                                        }}
+                                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#3399ff")}
+                                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#007bff")}
+                                      >
+                                        Show more →
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+
+
+                                <hr className="mt-4" />
+                              </div>
+                            );
+                            if ((index + 1) % 2 === 0) {
+                              elements.push(
+                                <div key={`ad-${index}`} className="container mt-1 mb-4">
+                                  {randomAd ? (
+                                    randomAd.url ? (
+                                      <a href={randomAd.url} target="_blank" rel="noopener noreferrer">
+                                        <Image
+                                          src={urlFor(randomAd.image).url()}
+                                          alt="Advertisement"
+                                          className="img-fluid w-100"
+                                          width={1200}
+                                          height={400}
+                                        />
+                                      </a>
+                                    ) : (
+                                      <Image
+                                        src={urlFor(randomAd.image).url()}
+                                        alt="Advertisement"
+                                        className="img-fluid w-100"
+                                        width={1200}
+                                        height={400}
+                                      />
+                                    )
+                                  ) : (
+                                    <Image src={blog_banner_ad} alt="recent" className="img-fluid w-100" />
+                                  )}
+                                </div>
+                              );
+                            }
+                            return elements;
+                          }, [])}
+                      </>
+
+
+
                     ) : (
+                      // For all other categories, show filtered/paginated blogs
                       paginatedBlogs.map((blog, idx) => (
                         <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
                           <BannerCard
@@ -526,12 +659,10 @@ const Blog = () => {
                     )}
                   </div>
                 </div>
-
-
-
               </div>
 
-              <div className='container mt-5'>
+
+              {/* <div className='container mt-5'>
                 {randomAd ? (
                   randomAd.url ? (
                     <a href={randomAd.url} target="_blank" rel="noopener noreferrer">
@@ -556,7 +687,7 @@ const Blog = () => {
                   <Image src={blog_banner_ad} alt="recent" className="img-fluid w-100" />
                 )}
 
-              </div>
+              </div> */}
               {["General", "Product", "News & Event"].includes(activeCategory) && filteredBlogs.length > blogsPerPage && (
                 <div className='py-5'>
                   <Pagination
