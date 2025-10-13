@@ -375,7 +375,7 @@ const Blog = () => {
                     <h1>{featuredBlog.title}</h1>
                     <p>{featuredBlog.summary}</p>
                     <p>
-                      {new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString()}
+                      {featuredBlog.author} . {new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString()}
                     </p>
                   </>
                 ) : (
