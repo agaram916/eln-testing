@@ -430,8 +430,12 @@ const Blog = () => {
                 type="text"
                 placeholder="Start searching here"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setActiveCategory('All articles');  // Set active category to "All articles" when searching
+                }}
               />
+
             </div>
             {touchedTop && <div style={{ height: "180px" }} />}
           </div>
