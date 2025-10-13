@@ -561,7 +561,9 @@ const Blog = () => {
                           .reduce<JSX.Element[]>((elements, cat, index) => {
                             elements.push(
                               <div key={cat} className="mb-5">
-                                <h4 className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block">
+                                <h4 className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block"
+                                  style={{ borderBottom: "3px solid blue" }}>
+                                  
                                   {categoryTitles[cat] || cat}
                                 </h4>
 
