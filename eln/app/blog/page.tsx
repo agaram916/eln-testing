@@ -343,9 +343,19 @@ const Blog = () => {
 
         <div className="publication-banner">
           <div className="container">
-            <div className="row mt-5" ref={BannerRef}>
+            <div
+              className="row mt-5 cursor-pointer"
+              ref={BannerRef}
+              onClick={() => {
+                if (featuredBlog?.slug?.current) {
+                  router.push(`/blog/${decodeURIComponent(featuredBlog.slug.current)}`);
+                }
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              {/* Left column: text + whitepaper */}
               <div className="col-md-6 position-relative">
-                {/* Whitepaper image (always visible like in static) */}
+                {/* Whitepaper image (always visible) */}
                 <Image
                   src={whitepaper}
                   alt="Feature Whitepaper"
@@ -360,7 +370,7 @@ const Blog = () => {
                   <button
                     className="back-arrow-btn"
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent accidental navigation
+                      e.stopPropagation(); // prevents navigating to the blog slug
                       router.back();
                     }}
                   >
@@ -369,39 +379,37 @@ const Blog = () => {
                   <span className="line ms-2"></span>
                 </div>
 
-                {/* Blog text content (dynamic or fallback static) */}
+                {/* Blog text content */}
                 {featuredBlog ? (
                   <>
                     <h1>{featuredBlog.title}</h1>
                     <p>{featuredBlog.summary}</p>
                     <p>
-                      {featuredBlog.author} . {new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString()}
+                      {featuredBlog.author}{" "}
+                      {new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </p>
                   </>
                 ) : (
                   <>
                     <h1>
-                      Stay Updated with the latest in lab digitization and ELN
-                      advancements.
+                      Stay Updated with the latest in lab digitization and ELN advancements.
                     </h1>
                     <p>
-                      GxP is a set of regulations and quality guidelines formulated to
-                      ensure the safety of life sciences products while maintaining the
-                      quality of processes throughout every stage of manufacturing...
+                      GxP is a set of regulations and quality guidelines formulated to ensure the safety of life sciences products while maintaining quality...
                     </p>
                     <p>Dec 22, 2025</p>
                   </>
                 )}
               </div>
 
-              {/* Right-side image (dynamic mainImage or placeholder) */}
-              <div className="col-md-6">
+              {/* Right column: image */}
+              <div className="col-md-6 position-relative">
                 <Image
-                  src={
-                    featuredBlog?.mainImage
-                      ? featuredBlog.mainImage
-                      : placeholder_img1
-                  }
+                  src={featuredBlog?.mainImage ? featuredBlog.mainImage : placeholder_img1}
                   alt="Featured Blog"
                   className="img-fluid placeholder1"
                   width={600}
@@ -410,7 +418,7 @@ const Blog = () => {
               </div>
             </div>
 
-            {/* Search bar (same as before) */}
+            {/* Search bar */}
             <div
               ref={SearchRef}
               className={`search_bar w-75 mx-auto ${touchedTop ? "fixed" : ""}`}
