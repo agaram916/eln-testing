@@ -75,6 +75,8 @@ const Blog = () => {
   const [featuredBlog, setFeaturedBlog] = useState<Blog | null>(null);
   const [randomAd, setRandomAd] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
+
   interface Blog {
     title: string;
     slug: { current: string };
@@ -433,12 +435,23 @@ const Blog = () => {
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setActiveCategory('All articles');  // Set active category to "All articles" when searching
+                  setSearchSubmitted(false); // reset on typing new search term
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault(); // prevent form submit or default behavior
+                    setSearchSubmitted(true); // mark that search was submitted
+                    // Optionally, you can trigger other effects or API calls here
+                  }
                 }}
               />
+
 
             </div>
             {touchedTop && <div style={{ height: "180px" }} />}
           </div>
+          
+
         </div>
 
 
@@ -489,144 +502,180 @@ const Blog = () => {
                 </div>
               </div>
             </div>
-
-            <div className='col-md-9 blogs-section ' ref={blogsSectionRef}>
-              {["General", "Product", "News & Event", "All articles","Top Read Articles"].includes(activeCategory) && (
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className='recent'>
-                    <h2 className="recent-post-heading">
-                      <span className="highlight-bg">{activeCategory}</span>
-                    </h2>
-                  </div>
-                  <div className="col-4 text-end recent">
-                    <Image src={recent} alt="recent" />
-                    <p className="mt-4">Explore the latest insights, tips, and updates on lab digitization and ELN systems.</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="container">
-                <div className="container">
+            {searchSubmitted && searchTerm.trim() !== "" ? (
+              // Show search results only
+              <div className='col-md-9 blogs-section ' ref={blogsSectionRef}>
+                <h4>You are searching for: <strong>{searchTerm}</strong></h4>
+                {filteredBlogs.length > 0 ? (
                   <div className="row">
-                    {activeCategory === "All article" ? (
-                      // Display all blogs flat (not grouped or sliced), paginated if needed
-                      paginatedBlogs.map((blog, idx) => (
-                        <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
-                          <BannerCard
-                            img={blog.mainImage || placeholder_img}
-                            alt={blog.title}
-                            label={blog.category || "General"}
-                            title={blog.title}
-                            desc={blog.summary}
-                            author={blog.author}
-                            usernameTags={blog.usernameTags}
-                            publishedAt={blog.publishedAt}
-                            slug={blog.slug.current}
-                          />
-                        </div>
-                      ))
-                    ) : activeCategory === "Categorized" ? (
-                      <>
-                        <h4
-                          className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block w-auto"
-                        >
-                          Recent Post
-                        </h4>
-                        <div className="row mb-6">
-                          {blogs
-                            .filter(blog => blog.category !== 'featured') // Exclude featured if needed
-                            .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
-                            .slice(0, 2)
-                            .map((blog, idx) => (
-                              <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
-                                <BannerCard
-                                  img={blog.mainImage || placeholder_img}
-                                  alt={blog.title}
-                                  label={blog.category || "General"}
-                                  title={blog.title}
-                                  desc={blog.summary}
-                                  author={blog.author}
-                                  usernameTags={blog.usernameTags}
-                                  publishedAt={blog.publishedAt}
-                                  slug={decodeURIComponent(blog.slug.current)}
-                                />
-                              </div>
-                            ))
-                          }
-                        </div>
-                        <hr className="mt-4" />
+                    {filteredBlogs.map((blog, idx) => (
+                      <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                        <BannerCard
+                          img={blog.mainImage || placeholder_img}
+                          alt={blog.title}
+                          label={blog.category || "General"}
+                          title={blog.title}
+                          desc={blog.summary}
+                          author={blog.author}
+                          usernameTags={blog.usernameTags}
+                          publishedAt={blog.publishedAt}
+                          slug={blog.slug.current}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No results found.</p>
+                )}
+              </div>
+            ) : (
 
-                        {desiredOrder
-                          .filter(cat => groupedBlogs[cat])
-                          .reduce<JSX.Element[]>((elements, cat, index) => {
-                            elements.push(
-                              <div key={cat} className="mb-5">
-                                <h4 className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block"
-                                  style={{ borderBottom: "3px solid blue" }}>
-                                  
-                                  {categoryTitles[cat] || cat}
-                                </h4>
+              <div className='col-md-9 blogs-section ' ref={blogsSectionRef}>
+                {["General", "Product", "News & Event", "All articles", "Top Read Articles"].includes(activeCategory) && (
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className='recent'>
+                      <h2 className="recent-post-heading">
+                        <span className="highlight-bg">{activeCategory}</span>
+                      </h2>
+                    </div>
+                    <div className="col-4 text-end recent">
+                      <Image src={recent} alt="recent" />
+                      <p className="mt-4">Explore the latest insights, tips, and updates on lab digitization and ELN systems.</p>
+                    </div>
+                  </div>
+                )}
 
-                                <div className="row">
-                                  {groupedBlogs[cat].slice(0, 4).map((blog, idx) => (
-                                    <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
-                                      <BannerCard
-                                        img={blog.mainImage || placeholder_img}
-                                        alt={blog.title}
-                                        label={blog.category || "General"}
-                                        title={blog.title}
-                                        desc={blog.summary}
-                                        author={blog.author}
-                                        usernameTags={blog.usernameTags}
-                                        publishedAt={blog.publishedAt}
-                                        slug={decodeURIComponent(blog.slug.current)}
-                                      />
-                                    </div>
-                                  ))}
+                <div className="container">
+                  <div className="container">
+                    <div className="row">
+                      {activeCategory === "All article" ? (
+                        // Display all blogs flat (not grouped or sliced), paginated if needed
+                        paginatedBlogs.map((blog, idx) => (
+                          <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                            <BannerCard
+                              img={blog.mainImage || placeholder_img}
+                              alt={blog.title}
+                              label={blog.category || "General"}
+                              title={blog.title}
+                              desc={blog.summary}
+                              author={blog.author}
+                              usernameTags={blog.usernameTags}
+                              publishedAt={blog.publishedAt}
+                              slug={blog.slug.current}
+                            />
+                          </div>
+                        ))
+                      ) : activeCategory === "Categorized" ? (
+                        <>
+                          <h4
+                            className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block w-auto"
+                          >
+                            Recent Post
+                          </h4>
+                          <div className="row mb-6">
+                            {blogs
+                              .filter(blog => blog.category !== 'featured') // Exclude featured if needed
+                              .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
+                              .slice(0, 2)
+                              .map((blog, idx) => (
+                                <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                                  <BannerCard
+                                    img={blog.mainImage || placeholder_img}
+                                    alt={blog.title}
+                                    label={blog.category || "General"}
+                                    title={blog.title}
+                                    desc={blog.summary}
+                                    author={blog.author}
+                                    usernameTags={blog.usernameTags}
+                                    publishedAt={blog.publishedAt}
+                                    slug={decodeURIComponent(blog.slug.current)}
+                                  />
                                 </div>
+                              ))
+                            }
+                          </div>
+                          <hr className="mt-4" />
 
-                                {/* ✅ Show "Show more" button only if NOT Top Read Articles */}
-                                {cat !== "topRead" && (
-                                  <div className="text-center mt-2">
-                                    <div style={{ textAlign: "right", marginTop: "10px" }}>
-                                      <button
-                                        onClick={() => {
-                                          const matchedCategory = categories.find(c =>
-                                            c.toLowerCase().includes(cat.toLowerCase())
-                                          );
-                                          setActiveCategory(matchedCategory || "General");
-                                          window.scrollTo({ top: 0, behavior: "smooth" });
-                                        }}
-                                        style={{
-                                          backgroundColor: "#007bff",
-                                          color: "white",
-                                          border: "none",
-                                          padding: "8px 18px",
-                                          borderRadius: "25px",
-                                          fontSize: "14px",
-                                          fontWeight: "500",
-                                          cursor: "pointer",
-                                          transition: "background-color 0.3s ease",
-                                        }}
-                                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#3399ff")}
-                                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#007bff")}
-                                      >
-                                        Show more →
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-
-
-                                <hr className="mt-4" />
-                              </div>
-                            );
-                            if ((index + 1) % 2 === 0) {
+                          {desiredOrder
+                            .filter(cat => groupedBlogs[cat])
+                            .reduce<JSX.Element[]>((elements, cat, index) => {
                               elements.push(
-                                <div key={`ad-${index}`} className="container mt-1 mb-4">
-                                  {randomAd ? (
-                                    randomAd.url ? (
-                                      <a href={randomAd.url} target="_blank" rel="noopener noreferrer">
+                                <div key={cat} className="mb-5">
+                                  <h4 className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block"
+                                    style={{ borderBottom: "3px solid blue" }}>
+
+                                    {categoryTitles[cat] || cat}
+                                  </h4>
+
+                                  <div className="row">
+                                    {groupedBlogs[cat].slice(0, 4).map((blog, idx) => (
+                                      <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                                        <BannerCard
+                                          img={blog.mainImage || placeholder_img}
+                                          alt={blog.title}
+                                          label={blog.category || "General"}
+                                          title={blog.title}
+                                          desc={blog.summary}
+                                          author={blog.author}
+                                          usernameTags={blog.usernameTags}
+                                          publishedAt={blog.publishedAt}
+                                          slug={decodeURIComponent(blog.slug.current)}
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* ✅ Show "Show more" button only if NOT Top Read Articles */}
+                                  {cat !== "topRead" && (
+                                    <div className="text-center mt-2">
+                                      <div style={{ textAlign: "right", marginTop: "10px" }}>
+                                        <button
+                                          onClick={() => {
+                                            const matchedCategory = categories.find(c =>
+                                              c.toLowerCase().includes(cat.toLowerCase())
+                                            );
+                                            setActiveCategory(matchedCategory || "General");
+                                            window.scrollTo({ top: 0, behavior: "smooth" });
+                                          }}
+                                          style={{
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            border: "none",
+                                            padding: "8px 18px",
+                                            borderRadius: "25px",
+                                            fontSize: "14px",
+                                            fontWeight: "500",
+                                            cursor: "pointer",
+                                            transition: "background-color 0.3s ease",
+                                          }}
+                                          onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#3399ff")}
+                                          onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#007bff")}
+                                        >
+                                          Show more →
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+
+
+                                  <hr className="mt-4" />
+                                </div>
+                              );
+                              if ((index + 1) % 2 === 0) {
+                                elements.push(
+                                  <div key={`ad-${index}`} className="container mt-1 mb-4">
+                                    {randomAd ? (
+                                      randomAd.url ? (
+                                        <a href={randomAd.url} target="_blank" rel="noopener noreferrer">
+                                          <Image
+                                            src={urlFor(randomAd.image).url()}
+                                            alt="Advertisement"
+                                            className="img-fluid w-100"
+                                            width={1200}
+                                            height={400}
+                                          />
+                                        </a>
+                                      ) : (
                                         <Image
                                           src={urlFor(randomAd.image).url()}
                                           alt="Advertisement"
@@ -634,52 +683,43 @@ const Blog = () => {
                                           width={1200}
                                           height={400}
                                         />
-                                      </a>
+                                      )
                                     ) : (
-                                      <Image
-                                        src={urlFor(randomAd.image).url()}
-                                        alt="Advertisement"
-                                        className="img-fluid w-100"
-                                        width={1200}
-                                        height={400}
-                                      />
-                                    )
-                                  ) : (
-                                    <Image src={blog_banner_ad} alt="recent" className="img-fluid w-100" />
-                                  )}
-                                </div>
-                              );
-                            }
-                            return elements;
-                          }, [])}
-                      </>
+                                      <Image src={blog_banner_ad} alt="recent" className="img-fluid w-100" />
+                                    )}
+                                  </div>
+                                );
+                              }
+                              return elements;
+                            }, [])}
+                        </>
 
 
 
-                    ) : (
-                      // For all other categories, show filtered/paginated blogs
-                      paginatedBlogs.map((blog, idx) => (
-                        <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
-                          <BannerCard
-                            img={blog.mainImage || placeholder_img}
-                            alt={blog.title}
-                            label={blog.category || "General"}
-                            title={blog.title}
-                            desc={blog.summary}
-                            author={blog.author}
-                            usernameTags={blog.usernameTags}
-                            publishedAt={blog.publishedAt}
-                            slug={blog.slug.current}
-                          />
-                        </div>
-                      ))
-                    )}
+                      ) : (
+                        // For all other categories, show filtered/paginated blogs
+                        paginatedBlogs.map((blog, idx) => (
+                          <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                            <BannerCard
+                              img={blog.mainImage || placeholder_img}
+                              alt={blog.title}
+                              label={blog.category || "General"}
+                              title={blog.title}
+                              desc={blog.summary}
+                              author={blog.author}
+                              usernameTags={blog.usernameTags}
+                              publishedAt={blog.publishedAt}
+                              slug={blog.slug.current}
+                            />
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
 
-              {/* <div className='container mt-5'>
+                {/* <div className='container mt-5'>
                 {randomAd ? (
                   randomAd.url ? (
                     <a href={randomAd.url} target="_blank" rel="noopener noreferrer">
@@ -705,18 +745,19 @@ const Blog = () => {
                 )}
 
               </div> */}
-              {["General", "Product", "News & Event"].includes(activeCategory) && filteredBlogs.length > blogsPerPage && (
-                <div className='py-5'>
-                  <Pagination
-                    totalItems={filteredBlogs.length}
-                    itemsPerPage={blogsPerPage}
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                  />
-                </div>
-              )}
+                {["General", "Product", "News & Event"].includes(activeCategory) && filteredBlogs.length > blogsPerPage && (
+                  <div className='py-5'>
+                    <Pagination
+                      totalItems={filteredBlogs.length}
+                      itemsPerPage={blogsPerPage}
+                      currentPage={currentPage}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                )}
 
-            </div>
+              </div>
+            )}
           </div>
         </div>
 

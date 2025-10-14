@@ -74,6 +74,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
     const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
     const [viewCount, setViewCount] = useState<number | null>(null);
     const [activeTopic, setActiveTopic] = useState<string | null>(null);
+    
     const relatedQuery = `*[_type == "blog" && category == $category && slug.current != $slug] | order(publishedAt desc)[0..1]{
   title,
   summary,
