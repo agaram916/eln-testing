@@ -74,7 +74,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
     const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
     const [viewCount, setViewCount] = useState<number | null>(null);
     const [activeTopic, setActiveTopic] = useState<string | null>(null);
-    
+
     const relatedQuery = `*[_type == "blog" && category == $category && slug.current != $slug] | order(publishedAt desc)[0..1]{
   title,
   summary,
@@ -422,6 +422,26 @@ export default function Productdownload({ params }: { params: { slug: string } }
                                             return <h3 id={id} className="mt-3 mb-1">{children}</h3>;
                                         },
 
+                                    },
+
+
+                                    marks: {
+                                        highlight: ({ children, value }) => {
+                                            const color = value?.color || 'yellow';
+                                            return (
+                                                <span style={{ backgroundColor: color, padding: '0 2px', borderRadius: '2px' }}>
+                                                    {children}
+                                                </span>
+                                            );
+                                        },
+                                        fontColor: ({ children, value }) => {
+                                            const color = value?.color || '#000'; // default black
+                                            return (
+                                                <span style={{ color: color }}>
+                                                    {children}
+                                                </span>
+                                            );
+                                        },
                                     },
                                 }}
                             />
