@@ -491,7 +491,7 @@ const Blog = () => {
             </div>
 
             <div className='col-md-9 blogs-section ' ref={blogsSectionRef}>
-              {["General", "Product", "News & Event", "All articles"].includes(activeCategory) && (
+              {["General", "Product", "News & Event", "All articles","Top Read Articles"].includes(activeCategory) && (
                 <div className="d-flex justify-content-between align-items-center">
                   <div className='recent'>
                     <h2 className="recent-post-heading">
