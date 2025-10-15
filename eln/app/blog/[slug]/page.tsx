@@ -322,16 +322,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
                         <div className="admin-tag">
                             <p>{blog.summary}</p>
                             <div className="post-meta">
-                                <span className="author">
-                                    {blog.author?.url ? (
-                                        <Link href={blog.author.url} target="_blank" rel="noopener noreferrer" className="author-name">
-                                            {blog.author.name}
-                                        </Link>
-                                    ) : (
-                                        blog.author?.name || ""
-                                    )}
-                                </span>
-
+                                <span className="author">{blog.author}</span>
                                 <span className="">•</span>
                                 <span className="date">{new Date(blog.publishedAt).toDateString()}</span>
                                 <div>
