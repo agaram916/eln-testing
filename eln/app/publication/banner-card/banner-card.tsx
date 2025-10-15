@@ -7,7 +7,10 @@ interface BannerCardProps {
     label: string;
     title: string;
     desc?: string;
-    author?: string;
+    author?: {
+        name: string;
+        url?: string;
+    };
     usernameTags?: string[];
     publishedAt?: string;
     slug: string;
@@ -46,15 +49,29 @@ export default function BannerCard(props: BannerCardProps) {
             </div>
             <div className="mt-4">
                 <p className="posted-date">
-                    <span className="author-name px-2" style={{ color: '#1163EA', fontWeight: '600' }}>
-                        {props.author}
-                    </span>
+                    {props.author?.url ? (
+                        <Link
+                            href={props.author.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="author-name px-2"
+                            style={{ color: '#1163EA', fontWeight: '600' }}
+                        >
+                            {props.author.name}
+                        </Link>
+                    ) : (
+                        <span className="author-name px-2" style={{ color: '#1163EA', fontWeight: '600' }}>
+                            {props.author?.name}
+                        </span>
+                    )}
+
                     <span style={{ fontWeight: '400' }}>
                         {props.publishedAt ? new Date(props.publishedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : ""}
-
                     </span>
                 </p>
             </div>
+
+
         </div>
     );
 }

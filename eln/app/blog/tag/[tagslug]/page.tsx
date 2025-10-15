@@ -58,6 +58,8 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [randomAd, setRandomAd] = useState<Ad | null>(null);
   const decodedTag = decodeURIComponent(params.tagslug);
+  
+  
 
 
   useEffect(() => {
@@ -120,10 +122,17 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
     setPopupClosed(true);
   };
 
-  const filteredBlogs = blogs.filter((blog) =>
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (blog.summary && blog.summary.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredBlogs = blogs.filter((blog) => {
+  const search = searchTerm.toLowerCase();
+  return (
+    blog.title?.toLowerCase().includes(search) ||
+    blog.summary?.toLowerCase().includes(search) ||
+    blog.author?.toLowerCase().includes(search) ||
+    blog.category?.toLowerCase().includes(search) ||
+    blog.usernameTags?.some((tag: string) => tag.toLowerCase().includes(search))
   );
+});
+
 
   useEffect(() => {
       async function fetchAds() {

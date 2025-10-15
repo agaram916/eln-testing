@@ -83,7 +83,10 @@ const Blog = () => {
     summary?: string;
     fullDetails?: any[];
     category?: string;
-    author?: string;
+    author?: {
+      name: string;
+      url?: string;
+    };
     usernameTags?: string[];
     publishedAt?: string;
     mainImage?: string;
@@ -108,11 +111,11 @@ const Blog = () => {
     setCurrentPage(1);
   };
 
-
-
-
-
-
+  useEffect(() => {
+    if (searchSubmitted && blogsSectionRef.current) {
+      blogsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [searchSubmitted]);
 
 
 
@@ -234,7 +237,8 @@ const Blog = () => {
 
     const titleMatch = blog.title?.toLowerCase().includes(lowerSearch);
     const summaryMatch = blog.summary?.toLowerCase().includes(lowerSearch);
-    const authorMatch = blog.author?.toLowerCase().includes(lowerSearch);
+    const authorMatch = blog.author?.name?.toLowerCase().includes(lowerSearch);
+
     const usernameTagsMatch = blog.usernameTags?.some((tag: string) => tag.toLowerCase().includes(lowerSearch));
     const categoryMatch = blog.category?.toLowerCase().includes(lowerSearch);
 
@@ -387,7 +391,20 @@ const Blog = () => {
                     <h1>{featuredBlog.title}</h1>
                     <p>{featuredBlog.summary}</p>
                     <p>
-                      {featuredBlog.author}{" "}
+                      {featuredBlog.author?.url ? (
+                        <Link
+                          href={featuredBlog.author.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="author-name"
+                        >
+                          {featuredBlog.author.name}
+                        </Link>
+                      ) : (
+                        <span className="author-name">{featuredBlog.author?.name}</span>
+                      )}
+
+
                       {new Date(featuredBlog.publishedAt ?? Date.now()).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -450,7 +467,7 @@ const Blog = () => {
             </div>
             {touchedTop && <div style={{ height: "180px" }} />}
           </div>
-          
+
 
         </div>
 
