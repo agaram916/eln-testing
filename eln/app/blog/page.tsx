@@ -44,6 +44,7 @@ const blogsQuery = `*[_type == "blog"] | order(publishedAt desc){
   slug,
   category,
   author,
+  authorUrl,
   usernameTags,
   publishedAt,
   "mainImage": mainImage.asset->url
@@ -93,6 +94,7 @@ const Blog = () => {
     fullDetails?: any[];
     category?: string;
     author?: string;
+    authorUrl?: string; 
     usernameTags?: string[];
     publishedAt?: string;
     mainImage?: string;
@@ -390,9 +392,6 @@ const Blog = () => {
               </div>
               {/* Render the popup text block */}
               <PortableText value={popupContent.text} />
-              {/* Render the popup image if exists */}
-        
-              {/* Render link button if link exists */}
               {popupContent.link && (
                 <a href={popupContent.link} target="_blank" rel="noopener noreferrer" className="popup-subscribe">
                   Learn More
@@ -576,6 +575,7 @@ const Blog = () => {
                           title={blog.title}
                           desc={blog.summary}
                           author={blog.author}
+                          authorUrl={blog.authorUrl} 
                           usernameTags={blog.usernameTags}
                           publishedAt={blog.publishedAt}
                           slug={blog.slug.current}
@@ -618,6 +618,7 @@ const Blog = () => {
                               title={blog.title}
                               desc={blog.summary}
                               author={blog.author}
+                              authorUrl={blog.authorUrl}
                               usernameTags={blog.usernameTags}
                               publishedAt={blog.publishedAt}
                               slug={blog.slug.current}
@@ -645,6 +646,7 @@ const Blog = () => {
                                     title={blog.title}
                                     desc={blog.summary}
                                     author={blog.author}
+                                    authorUrl={blog.authorUrl}
                                     usernameTags={blog.usernameTags}
                                     publishedAt={blog.publishedAt}
                                     slug={decodeURIComponent(blog.slug.current)}
@@ -676,6 +678,7 @@ const Blog = () => {
                                           title={blog.title}
                                           desc={blog.summary}
                                           author={blog.author}
+                                          authorUrl={blog.authorUrl}
                                           usernameTags={blog.usernameTags}
                                           publishedAt={blog.publishedAt}
                                           slug={decodeURIComponent(blog.slug.current)}
@@ -766,6 +769,7 @@ const Blog = () => {
                               title={blog.title}
                               desc={blog.summary}
                               author={blog.author}
+                              authorUrl={blog.authorUrl}
                               usernameTags={blog.usernameTags}
                               publishedAt={blog.publishedAt}
                               slug={blog.slug.current}

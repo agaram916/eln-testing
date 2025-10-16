@@ -36,6 +36,7 @@ const blogsByTagQuery = `*[_type == "blog" && $tag in usernameTags] | order(publ
   slug,
   category,
   author,
+  authorUrl,
   usernameTags,
   publishedAt,
   "mainImage": mainImage.asset->url
@@ -210,6 +211,7 @@ const BlogByTag = ({ params }: { params: { tagslug: string } }) => {
                         title={blog.title}
                         desc={blog.summary}
                         author={blog.author}
+                        authorUrl={blog.authorUrl}
                         usernameTags={blog.usernameTags}
                         publishedAt={blog.publishedAt}
                         slug={decodeURIComponent(blog.slug.current)}

@@ -8,6 +8,7 @@ interface BannerCardProps {
     title: string;
     desc?: string;
     author?: string;
+    authorUrl?:string;
     usernameTags?: string[];
     publishedAt?: string;
     slug: string;
@@ -43,21 +44,46 @@ export default function BannerCard(props: BannerCardProps) {
                         </button>
                     </Link>
                 ))}
-                
             </div>
-            <div className="mt-4">
-                <p className="posted-date">
-                    <span className="author-name px-2" style={{ color: '#1163EA', fontWeight: '600' }}>
-                        {props.author}
+              <div className="mt-4">
+                {props.author && props.authorUrl ? (
+                    <a
+                        href={props.authorUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="posted-date d-inline-block"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <span className="author-name px-2" style={{ color: '#1163EA', fontWeight: '600' }}>
+                            {props.author}
+                        </span>
+                        <span style={{ fontWeight: '400', marginLeft: '5px', color: '#000' }}>
+                            {props.publishedAt
+                                ? new Date(props.publishedAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: '2-digit',
+                                      year: 'numeric',
+                                  })
+                                : ""}
+                        </span>
+                    </a>
+                ) : (
+                    <span className="posted-date">
+                        <span className="author-name px-2" style={{ color: '#1163EA', fontWeight: '600' }}>
+                            {props.author}
+                        </span>
+                        <span style={{ fontWeight: '400', marginLeft: '5px' }}>
+                            {props.publishedAt
+                                ? new Date(props.publishedAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: '2-digit',
+                                      year: 'numeric',
+                                  })
+                                : ""}
+                        </span>
                     </span>
-                    <span style={{ fontWeight: '400' }}>
-                        {props.publishedAt ? new Date(props.publishedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : ""}
-
-                    </span>
-                </p>
+                )}
             </div>
         </div>
     );
 }
-  
-

@@ -40,6 +40,7 @@ const query = `*[_type == "blog" && slug.current == $slug][0]{
   fullDetails,
   category,
   author,
+authorUrl,
   usernameTags,
   publishedAt,
   viewCount,   
@@ -81,6 +82,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
   slug,
   category,
   author,
+authorUrl,
   usernameTags,
   publishedAt,
   "mainImage": mainImage.asset->url
@@ -92,6 +94,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
   slug,
   category,
   author,
+authorUrl,
   usernameTags,
   publishedAt,
   "mainImage": mainImage.asset->url
@@ -322,7 +325,24 @@ export default function Productdownload({ params }: { params: { slug: string } }
                         <div className="admin-tag">
                             <p>{blog.summary}</p>
                             <div className="post-meta">
-                                <span className="author">{blog.author}</span>
+                                <div>
+                                    {blog.author && blog.authorUrl ? (
+                                        <a
+                                            href={blog.authorUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="author-name"
+                                            style={{ color: "#1163EA", fontWeight: 600, textDecoration: "none" }}
+                                        >
+                                            {blog.author}
+                                        </a>
+                                    ) : (
+                                        <span className="author-name" style={{ color: "#1163EA", fontWeight: 600 }}>
+                                            {blog.author}
+                                        </span>
+                                    )}
+                                </div>
+
                                 <span className="">•</span>
                                 <span className="date">{new Date(blog.publishedAt).toDateString()}</span>
                                 <div>
@@ -620,6 +640,7 @@ export default function Productdownload({ params }: { params: { slug: string } }
                                                     title={blog.title}
                                                     desc={blog.summary}
                                                     author={blog.author}
+                                                    authorUrl={blog.authorUrl}
                                                     usernameTags={blog.usernameTags}
                                                     publishedAt={blog.publishedAt}
                                                     slug={blog.slug.current}
