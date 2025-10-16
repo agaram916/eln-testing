@@ -14,6 +14,7 @@ interface BannerCardProps {
     slug: string;
 }
 export default function BannerCard(props: BannerCardProps) {
+     const tagColors = ["green", "purple", "orange"];
     return (
         <div className="bannercard">
             <Link href={`/blog/${props.slug}`}>
@@ -36,14 +37,20 @@ export default function BannerCard(props: BannerCardProps) {
             </p>
 
 
-            <div>
-                {props.usernameTags?.map((tag, idx) => (
-                    <Link key={idx} href={`/blog/tag/${tag}`}>
-                        <button className={`tag-btn tag-btn-green ms-${idx > 0 ? 2 : 0}`}>
-                            {tag}
-                        </button>
-                    </Link>
-                ))}
+           <div>
+                {props.usernameTags?.map((tag, idx) => {
+                    // Cycle through the colors
+                    const colorClass = `tag-btn-${tagColors[idx % tagColors.length]}`;
+                    return (
+                        <Link key={idx} href={`/blog/tag/${tag}`}>
+                            <button
+                                className={`tag-btn ${colorClass} ms-${idx > 0 ? 2 : 0}`}
+                            >
+                                {tag}
+                            </button>
+                        </Link>
+                    );
+                })}
             </div>
               <div className="mt-4">
                 {props.author && props.authorUrl ? (
