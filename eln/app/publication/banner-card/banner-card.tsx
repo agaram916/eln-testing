@@ -43,6 +43,7 @@ export default function BannerCard(props: BannerCardProps) {
                         </button>
                     </Link>
                 ))}
+                
             </div>
             <div className="mt-4">
                 <p className="posted-date">
@@ -58,3 +59,5 @@ export default function BannerCard(props: BannerCardProps) {
         </div>
     );
 }
+  
+
