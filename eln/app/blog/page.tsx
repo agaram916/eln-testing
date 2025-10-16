@@ -26,6 +26,7 @@ import { useRouter } from 'next/navigation';
 
 const blogsPerPage = 4;
 import { client } from "@/lib/sanity";
+import { PortableText } from '@portabletext/react';
 const categories = [
   'All articles',
   'Top Read Articles',
@@ -54,6 +55,13 @@ const adsQuery = `*[_type == "adImage"]{
 }`;
 const desiredOrder = ['topRead', 'general', 'product', 'news'];
 
+const popupQuery = `*[_type == "popup"][0]{
+  text,
+  image,
+  link
+}`;
+
+
 
 
 
@@ -77,6 +85,7 @@ const Blog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
 
+
   interface Blog {
     title: string;
     slug: { current: string };
@@ -96,6 +105,20 @@ const Blog = () => {
     featured: 'Featured',
     topRead: 'Top Read Articles',
   };
+
+
+  const [popupContent, setPopupContent] = useState<{
+    text: any[];
+    link?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    async function fetchPopup() {
+      const data = await client.fetch(popupQuery);
+      setPopupContent(data);
+    }
+    fetchPopup();
+  }, []);
   // Add this ref in your component
   const blogsSectionRef = useRef<HTMLDivElement>(null);
 
@@ -109,10 +132,10 @@ const Blog = () => {
   };
 
   useEffect(() => {
-  if (searchSubmitted && blogsSectionRef.current) {
-    blogsSectionRef.current.scrollIntoView({ behavior: "smooth" });
-  }
-}, [searchSubmitted]);
+    if (searchSubmitted && blogsSectionRef.current) {
+      blogsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [searchSubmitted]);
 
 
 
@@ -323,6 +346,33 @@ const Blog = () => {
     setCurrentPage(1);
   }, [activeCategory]);
 
+  useEffect(() => {
+  const handleMouseLeave = (e: MouseEvent) => {
+    if (e.clientY <= 0 && !popupClosed) {
+      setShowPopup(true);
+    }
+  };
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (!popupClosed) {
+      (e as any).returnValue = '';
+      return '';
+    }
+  };
+
+  document.addEventListener('mouseout', handleMouseLeave);
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
+  return () => {
+    document.removeEventListener('mouseout', handleMouseLeave);
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, [popupClosed]);
+
+
+
+  
+
 
 
 
@@ -332,13 +382,22 @@ const Blog = () => {
       {/* <div className={`protocolmenu ${isFixed ? 'fixed' : ''}`}>Sticky Content</div> */}
 
       <div className="blog-container">
-        {showPopup && (
+        {showPopup && popupContent && (
           <div className="popup-ad">
             <div className="popup-content">
               <div className="popup-header">
                 <button className="popup-close" onClick={handleClosePopup}>×</button>
               </div>
-              <button className="popup-subscribe">Subscription</button>
+              {/* Render the popup text block */}
+              <PortableText value={popupContent.text} />
+              {/* Render the popup image if exists */}
+        
+              {/* Render link button if link exists */}
+              {popupContent.link && (
+                <a href={popupContent.link} target="_blank" rel="noopener noreferrer" className="popup-subscribe">
+                  Learn More
+                </a>
+              )}
             </div>
           </div>
         )}
@@ -450,7 +509,7 @@ const Blog = () => {
             </div>
             {touchedTop && <div style={{ height: "180px" }} />}
           </div>
-          
+
 
         </div>
 
