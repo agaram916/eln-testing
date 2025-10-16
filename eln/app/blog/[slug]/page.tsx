@@ -378,15 +378,30 @@ authorUrl,
                                 </span>
 
                             </div>
-                            <div className="stats-right">
+                            <div
+                                className="stats-right"
+                                style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+                                onClick={() => {
+                                    if (typeof window !== "undefined") {
+                                        const blogUrl = `https://eln-testing.vercel.app/blog/${params.slug}`; // 👈 use params.slug here
+                                        const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(blogUrl)}`;
+                                        window.open(shareUrl, "_blank", "noopener,noreferrer");
+                                    }
+                                }}
+                            >
                                 <Image
                                     src={arrow}
-                                    alt="placeholder"
+                                    alt="Share to LinkedIn"
                                     className="img-fluid"
                                     style={{ width: "18px" }}
-                                />{" "}
-                                Share
+                                />
+                                <span>Share</span>
                             </div>
+
+
+
+
+
                         </div>
                         <div className="mt-4 blog-content">
                             <PortableText
