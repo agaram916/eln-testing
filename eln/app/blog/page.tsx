@@ -94,7 +94,7 @@ const Blog = () => {
     fullDetails?: any[];
     category?: string;
     author?: string;
-    authorUrl?: string; 
+    authorUrl?: string;
     usernameTags?: string[];
     publishedAt?: string;
     mainImage?: string;
@@ -349,37 +349,38 @@ const Blog = () => {
   }, [activeCategory]);
 
   useEffect(() => {
-  const handleMouseLeave = (e: MouseEvent) => {
-    if (e.clientY <= 0 && !popupClosed) {
-      setShowPopup(true);
-    }
-  };
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !popupClosed) {
+        setShowPopup(true);
+      }
+    };
 
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (!popupClosed) {
-      (e as any).returnValue = '';
-      return '';
-    }
-  };
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!popupClosed) {
+        (e as any).returnValue = '';
+        return '';
+      }
+    };
 
-  document.addEventListener('mouseout', handleMouseLeave);
-  window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('mouseout', handleMouseLeave);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
-  return () => {
-    document.removeEventListener('mouseout', handleMouseLeave);
-    window.removeEventListener('beforeunload', handleBeforeUnload);
-  };
-}, [popupClosed]);
+    return () => {
+      document.removeEventListener('mouseout', handleMouseLeave);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [popupClosed]);
 
 
 
-  
+
 
 
 
 
   return (
     <div>
+      <Header whiteHeader />
       {/* Optional Protocolmenu */}
       {/* <div className={`protocolmenu ${isFixed ? 'fixed' : ''}`}>Sticky Content</div> */}
 
@@ -575,7 +576,7 @@ const Blog = () => {
                           title={blog.title}
                           desc={blog.summary}
                           author={blog.author}
-                          authorUrl={blog.authorUrl} 
+                          authorUrl={blog.authorUrl}
                           usernameTags={blog.usernameTags}
                           publishedAt={blog.publishedAt}
                           slug={blog.slug.current}
@@ -627,11 +628,18 @@ const Blog = () => {
                         ))
                       ) : activeCategory === "Categorized" ? (
                         <>
-                          <h4
-                            className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block w-auto"
-                          >
-                            Recent Post
-                          </h4>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div className='recent'>
+                              <h2 className="recent-post-heading">
+                                <span className="highlight-bg">Recent Post</span>
+                              </h2>
+                            </div>
+                            <div className="col-4 text-end recent">
+                              <Image src={recent} alt="recent" />
+                              <p className="mt-4">Explore the latest insights, tips, and updates on lab digitization and ELN systems.</p>
+                            </div>
+                          </div>
+
                           <div className="row mb-6">
                             {blogs
                               .filter(blog => blog.category !== 'featured') // Exclude featured if needed
@@ -662,11 +670,10 @@ const Blog = () => {
                             .reduce<JSX.Element[]>((elements, cat, index) => {
                               elements.push(
                                 <div key={cat} className="mb-5">
-                                  <h4 className="recent-post-heading mb-4 border border-primary rounded-pill px-3 py-1 d-inline-block"
-                                    style={{ borderBottom: "3px solid blue" }}>
+                                  <h2 className="recent-post-heading d-inline-block">
+                                    <span className="highlight-bg">{categoryTitles[cat] || cat}</span>
 
-                                    {categoryTitles[cat] || cat}
-                                  </h4>
+                                  </h2>
 
                                   <div className="row">
                                     {groupedBlogs[cat].slice(0, 4).map((blog, idx) => (

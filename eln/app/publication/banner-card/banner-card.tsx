@@ -51,7 +51,7 @@ export default function BannerCard(props: BannerCardProps) {
                     return (
                         <Link key={idx} href={`/blog/tag/${tag}`}>
                             <button
-                                className={`tag-btn ${colorClass} ms-${idx > 0 ? 2 : 0}`}
+                                className={`tag-btn mt-2 ${colorClass} ms-${idx > 0 ? 2 : 0}`}
                             >
                                 {tag}
                             </button>

@@ -233,6 +233,7 @@ authorUrl,
 
     return (
         <>
+        <Header  whiteHeader/>
             <div className="publication-banner blog-body">
                 <Image
                     src={dotted_line}
@@ -260,7 +261,7 @@ authorUrl,
                     </div>
                 </div>
             </div>
-            <div className="container">
+            <div className="container blog-container">
                 <div className="row">
                     <div className="col-lg-3">
                         <div
