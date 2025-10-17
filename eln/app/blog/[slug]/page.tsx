@@ -10,6 +10,7 @@ import { IoSearch } from "react-icons/io5";
 import placeholder_img from "../../../public/assets/images/blog-body-banner.svg";
 import comments_profile from "../../../public/assets/images/blog/comments_profile.svg";
 import eye from "../../../public/assets/images/eye.svg";
+import linkedin from "../../../public/assets/images/linkedin.svg";
 import starimage from "../../../public/assets/images/star.svg";
 import arrow from "../../../public/assets/images/arrowsimple.svg";
 import search from "../../../public/assets/images/publication/search.svg";
@@ -334,7 +335,8 @@ authorUrl,
                                             className="author-name"
                                             style={{ color: "#1163EA", fontWeight: 600, textDecoration: "none" }}
                                         >
-                                            {blog.author}
+                                            
+                                            {blog.author} <Image src={linkedin} alt="LinkedIn" width={16} height={16}  />
                                         </a>
                                     ) : (
                                         <span className="author-name" style={{ color: "#1163EA", fontWeight: 600 }}>
