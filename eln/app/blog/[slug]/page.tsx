@@ -473,9 +473,10 @@ authorUrl,
                                             );
                                         },
                                         fontColor: ({ children, value }) => {
-                                            const color = value?.color || '#ec8989ff'; // use `color` instead of `hex`
+                                            const color = value?.color?.hex || '#ec8989ff'; // access hex from color object
                                             return <span style={{ color }}>{children}</span>;
                                         },
+
 
                                     },
                                 }}
