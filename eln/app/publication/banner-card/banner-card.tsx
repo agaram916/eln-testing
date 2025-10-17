@@ -8,13 +8,13 @@ interface BannerCardProps {
     title: string;
     desc?: string;
     author?: string;
-    authorUrl?:string;
+    authorUrl?: string;
     usernameTags?: string[];
     publishedAt?: string;
     slug: string;
 }
 export default function BannerCard(props: BannerCardProps) {
-     const tagColors = ["green", "purple", "orange"];
+    const tagColors = ["green", "purple", "orange"];
     return (
         <div className="bannercard">
             <Link href={`/blog/${props.slug}`}>
@@ -28,7 +28,14 @@ export default function BannerCard(props: BannerCardProps) {
             </Link>
 
             <label>{props.label}</label>
-            <Link href={`/blog/${props.slug}`}><h4>{props.title}</h4></Link>
+            <Link href={`/blog/${props.slug}`}><h4>
+  {props.title
+    ? props.title.split(" ").slice(0, 15).join(" ") +
+      (props.title.split(" ").length > 15 ? "..." : "")
+    : ""}
+</h4>
+
+            </Link>
             <p>
                 {props.desc
                     ? props.desc.split(" ").slice(0, 10).join(" ") +
@@ -37,7 +44,7 @@ export default function BannerCard(props: BannerCardProps) {
             </p>
 
 
-           <div>
+            <div>
                 {props.usernameTags?.map((tag, idx) => {
                     // Cycle through the colors
                     const colorClass = `tag-btn-${tagColors[idx % tagColors.length]}`;
@@ -52,7 +59,7 @@ export default function BannerCard(props: BannerCardProps) {
                     );
                 })}
             </div>
-              <div className="mt-4">
+            <div className="mt-4">
                 {props.author && props.authorUrl ? (
                     <a
                         href={props.authorUrl}
@@ -67,10 +74,10 @@ export default function BannerCard(props: BannerCardProps) {
                         <span style={{ fontWeight: '400', marginLeft: '5px', color: '#000' }}>
                             {props.publishedAt
                                 ? new Date(props.publishedAt).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: '2-digit',
-                                      year: 'numeric',
-                                  })
+                                    month: 'short',
+                                    day: '2-digit',
+                                    year: 'numeric',
+                                })
                                 : ""}
                         </span>
                     </a>
@@ -82,10 +89,10 @@ export default function BannerCard(props: BannerCardProps) {
                         <span style={{ fontWeight: '400', marginLeft: '5px' }}>
                             {props.publishedAt
                                 ? new Date(props.publishedAt).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: '2-digit',
-                                      year: 'numeric',
-                                  })
+                                    month: 'short',
+                                    day: '2-digit',
+                                    year: 'numeric',
+                                })
                                 : ""}
                         </span>
                     </span>
