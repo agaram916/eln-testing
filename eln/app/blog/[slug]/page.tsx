@@ -336,7 +336,7 @@ authorUrl,
                                             style={{ color: "#1163EA", fontWeight: 600, textDecoration: "none" }}
                                         >
                                             
-                                            {blog.author} <Image src={linkedin} alt="LinkedIn" width={16} height={16}  />
+                                            {blog.author} 
                                         </a>
                                     ) : (
                                         <span className="author-name" style={{ color: "#1163EA", fontWeight: 600 }}>
