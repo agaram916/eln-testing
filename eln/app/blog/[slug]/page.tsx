@@ -472,7 +472,7 @@ authorUrl,
                                             );
                                         },
                                         fontColor: ({ children, value }) => {
-                                            const color = value?.hex || value?.color || '#000'; // support either "hex" or "color"
+                                            const color = value?.hex ||'#ec8989ff'; // support either "hex" or "color"
                                             return <span style={{ color }}>{children}</span>;
                                         },
                                     },
