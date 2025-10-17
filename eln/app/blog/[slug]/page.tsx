@@ -335,8 +335,8 @@ authorUrl,
                                             className="author-name"
                                             style={{ color: "#1163EA", fontWeight: 600, textDecoration: "none" }}
                                         >
-                                            
-                                            {blog.author} 
+
+                                            {blog.author}
                                         </a>
                                     ) : (
                                         <span className="author-name" style={{ color: "#1163EA", fontWeight: 600 }}>
@@ -472,12 +472,8 @@ authorUrl,
                                             );
                                         },
                                         fontColor: ({ children, value }) => {
-                                            const color = value?.color || '#000'; // default black
-                                            return (
-                                                <span style={{ color: color }}>
-                                                    {children}
-                                                </span>
-                                            );
+                                            const color = value?.hex || value?.color || '#000'; // support either "hex" or "color"
+                                            return <span style={{ color }}>{children}</span>;
                                         },
                                     },
                                 }}
