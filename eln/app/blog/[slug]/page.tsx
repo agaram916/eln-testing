@@ -233,7 +233,7 @@ authorUrl,
 
     return (
         <>
-        <Header  whiteHeader/>
+            <Header whiteHeader />
             <div className="publication-banner blog-body">
                 <Image
                     src={dotted_line}
@@ -473,9 +473,10 @@ authorUrl,
                                             );
                                         },
                                         fontColor: ({ children, value }) => {
-                                            const color = value?.hex ||'#ec8989ff'; // support either "hex" or "color"
+                                            const color = value?.color || '#ec8989ff'; // use `color` instead of `hex`
                                             return <span style={{ color }}>{children}</span>;
                                         },
+
                                     },
                                 }}
                             />
