@@ -643,7 +643,7 @@ authorUrl,
                             <div className=" w-100 mx-auto">
                                 <h3>Related Post</h3>
                             </div>
-                            <div className="container mt-5">
+                            <div className="container mt-2">
                                 <div className="row">
                                     {relatedBlogs.length > 0 ? (
                                         relatedBlogs.map((blog, i) => (
