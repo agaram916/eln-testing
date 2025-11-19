@@ -619,7 +619,9 @@ const Blog = () => {
                   <div className="d-flex justify-content-between align-items-center title-flex">
                     <div className='recent'>
                       <h2 className="recent-post-heading">
-                        <span className="highlight-bg">{activeCategory}</span>
+                        <span className="highlight-bg">
+                          {activeCategory === "Product" ? "Industry" : activeCategory}
+                        </span>
                       </h2>
                     </div>
                     <div className="col-4 text-end recent recent-time">
@@ -655,7 +657,7 @@ const Blog = () => {
                           <div className="d-flex justify-content-between align-items-center title-flex">
                             <div className='recent'>
                               <h2 className="recent-post-heading">
-                                <span className="highlight-bg">Recent Post</span>
+                                <span className="highlight-bg">Top Read Articles</span>
                               </h2>
                             </div>
                             <div className="col-4 text-end recent recent-time">
@@ -663,8 +665,33 @@ const Blog = () => {
                               <p className="mt-4">Explore the latest insights, tips, and updates on lab digitization and ELN systems.</p>
                             </div>
                           </div>
-
+                          {/* Top Read Articles */}
                           <div className="row mb-6">
+                            {blogs
+                              .filter(blog => blog.isTopRead === true) // Only top read articles
+                              .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
+                              .slice(0, 2)
+                              .map((blog, idx) => (
+                                <div key={blog.slug.current || idx} className="col-md-6 px-3 mb-4">
+                                  <BannerCard
+                                    img={blog.mainImage || placeholder_img}
+                                    alt={blog.title}
+                                    label={blog.category || "General"}
+                                    title={blog.title}
+                                    desc={blog.summary}
+                                    author={blog.author}
+                                    authorUrl={blog.authorUrl}
+                                    usernameTags={blog.usernameTags}
+                                    publishedAt={blog.publishedAt}
+                                    slug={decodeURIComponent(blog.slug.current)}
+                                  />
+                                </div>
+                              ))
+                            }
+                          </div>
+
+
+                          {/* <div className="row mb-6">
                             {blogs
                               .filter(blog => blog.category !== 'featured') // Exclude featured if needed
                               .sort((a, b) => new Date(b.publishedAt ?? 0).getTime() - new Date(a.publishedAt ?? 0).getTime())
@@ -686,7 +713,7 @@ const Blog = () => {
                                 </div>
                               ))
                             }
-                          </div>
+                          </div> */}
                           <div className="mt-4"></div>
 
                           {desiredOrder
@@ -697,7 +724,9 @@ const Blog = () => {
                                   <div className="d-flex justify-content-between align-items-center title-flex">
                                     <div className='recent'>
                                       <h2 className="recent-post-heading d-inline-block">
-                                        <span className="highlight-bg">{categoryTitles[cat] || cat}</span>
+                                        <span className="highlight-bg">
+                                          {cat === "product" || categoryTitles[cat] === "Product" ? "Industry" : (categoryTitles[cat] || cat)}
+                                        </span>
                                       </h2>
                                     </div>
                                   </div>
